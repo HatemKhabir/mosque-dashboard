@@ -1,0 +1,42 @@
+server:
+  port:
+    8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mosque-khotba
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 86400000
+    refresh-expiration: 604800000
+
+  file:
+    upload-dir: ./uploads
+    allowed-types: audio/mpeg,audio/mp3,video/mp4,application/pdf
+
+  cors:
+    allowed-origins: http://localhost:3000,https://khotbaconnect.com
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type,X-Requested-With
+    max-age: 3600
+
+  mosque:
+    auto-approve: false
+    notification-email: musliminnovationlab@gmail.com
+
