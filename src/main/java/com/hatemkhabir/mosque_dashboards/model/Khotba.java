@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -43,6 +44,7 @@ public class Khotba {
 
     @PastOrPresent(message = "Date cannot be in the future")
     @Column(nullable = false)
+    @CreationTimestamp
     private LocalDate date;
 
     @PrePersist

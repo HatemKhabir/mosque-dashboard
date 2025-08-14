@@ -29,6 +29,10 @@ public class Mosque {
     @Column(nullable = false)
     private String city;
 
+    private String address;
+
+    private Boolean verified=false;
+
     @NotBlank(message = "Please Specify Mosque Name")
     @Column(nullable = false)
     private String mosqueName;

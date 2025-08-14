@@ -24,6 +24,8 @@ public class MosqueAdmin {
     private String email;
     private String passwordHash;
 
+    private String phoneNumber;
+
     @OneToOne(mappedBy = "mosqueAdmin")
     private Mosque mosque;
 }
