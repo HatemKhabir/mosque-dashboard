@@ -15,8 +15,5 @@ public class MosqueSpecifications {
                 city == null ? null : cb.equal(cb.lower(root.get("city")), city.toLowerCase());
     }
 
-    public static Specification<Mosque> hasName(String mosqueName) {
-        return (root, query, cb) ->
-                mosqueName == null ? null : cb.like(cb.lower(root.get("mosqueName")), "%" + mosqueName.toLowerCase() + "%");
-    }
+
 }

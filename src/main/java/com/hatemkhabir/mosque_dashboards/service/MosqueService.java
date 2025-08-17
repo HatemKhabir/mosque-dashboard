@@ -1,15 +1,24 @@
 package com.hatemkhabir.mosque_dashboards.service;
 
 
+import com.hatemkhabir.mosque_dashboards.common.KhotbaLanguage;
+import com.hatemkhabir.mosque_dashboards.common.KhotbaType;
 import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
 import com.hatemkhabir.mosque_dashboards.model.Khotba;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
+import com.hatemkhabir.mosque_dashboards.pagination.MosqueSpecifications;
+import com.hatemkhabir.mosque_dashboards.repository.KhotbaRepository;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +39,7 @@ public class MosqueService {
 
 
     private final MosqueRepository mosqueRepository;
+
 
     public Long registerMosque(MosqueRegistrationDto mosqueData, Long adminId){
         Optional<Mosque> existingMosque=mosqueRepository.findById(mosqueData.getId());
@@ -52,10 +62,18 @@ public class MosqueService {
         return mosqueRepository.findById(mosqueId).orElseThrow();
     }
 
-    public List<Mosque> getMosqueByCountry
-
-    public void verifyMosque(Long mosqueId){
-
+    public List<Mosque> listMosques(String country, String city){
+        return mosqueRepository.findAll(MosqueSpecifications.hasCity(country).or(MosqueSpecifications.hasCity(city))).stream().toList();
     }
+
+    public boolean verifyMosque(Long mosqueId){
+        Mosque existingMosque=mosqueRepository.findById(mosqueId).orElseThrow(()->new EntityNotFoundException("Mosque not found"));
+        if (existingMosque.getVerified())
+            return true;
+        existingMosque.setVerified(true);
+        mosqueRepository.save(existingMosque);
+    return existingMosque.getVerified();
+    }
+
 
 }

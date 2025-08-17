@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum KhotbaLanguage {
     ARABIC("ar", "العربية", "Arabic"),
+    Hungarian("hu","المجرية","Hungarian"),
     ENGLISH("en", "English", "English"),
     URDU("ur", "اردو", "Urdu"),
     TURKISH("tr", "Türkçe", "Turkish"),
