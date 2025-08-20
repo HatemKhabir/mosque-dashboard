@@ -31,6 +31,9 @@ public class Mosque {
 
     private String address;
 
+    private String adminEmail;
+    private String adminPhone;
+
     private Boolean verified=false;
 
     @NotBlank(message = "Please Specify Mosque Name")
@@ -40,6 +43,7 @@ public class Mosque {
     @OneToOne
     @JoinColumn(name = "admin_id",nullable = false)
     private MosqueAdmin mosqueAdmin;
+
 
     @OneToMany(mappedBy = "mosque",cascade = CascadeType.ALL)
     private List<Khotba> mosqueKhotbas;

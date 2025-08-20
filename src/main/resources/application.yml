@@ -3,6 +3,16 @@ server:
     8080
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: khabirhatem38@gmail.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+    password: mjxs voes xzin zvea
+
   datasource:
     url: jdbc:postgresql://localhost:5432/mosque-khotba
     username: postgres

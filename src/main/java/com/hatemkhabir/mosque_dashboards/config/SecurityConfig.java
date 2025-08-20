@@ -1,3 +1,4 @@
+/*
 package com.hatemkhabir.mosque_dashboards.config;
 
 
@@ -15,8 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    }
 
 
 }
+*/

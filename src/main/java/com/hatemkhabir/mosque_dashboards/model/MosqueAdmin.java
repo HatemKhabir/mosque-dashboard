@@ -19,10 +19,12 @@ public class MosqueAdmin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Email(message = "Email not valid")
-    @NotBlank(message = "Email should not be empty")
+
     private String email;
+    private String username;
     private String passwordHash;
+
+    private boolean passwordChanged=false;
 
     private String phoneNumber;
 

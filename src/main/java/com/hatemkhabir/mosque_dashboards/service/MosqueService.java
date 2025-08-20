@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.print.DocFlavor;
 import java.util.ArrayList;
@@ -37,9 +38,8 @@ verifyMosque(mosqueId) - Mark mosque as verified
 @RequiredArgsConstructor
 public class MosqueService {
 
-
     private final MosqueRepository mosqueRepository;
-
+    private final MosqueAdminService mosqueAdminService;
 
     public Long registerMosque(MosqueRegistrationDto mosqueData, Long adminId){
         Optional<Mosque> existingMosque=mosqueRepository.findById(mosqueData.getId());
@@ -48,7 +48,8 @@ public class MosqueService {
         }
         Mosque newMosque=Mosque.builder()
                 .id(mosqueData.getId())
-                .mosqueAdmin(mosqueData.getMosqueAdmin())
+                .adminEmail(mosqueData.getAdminEmail())
+                .adminPhone(mosqueData.getAdminPhone())
                 .mosqueName(mosqueData.getMosqueName())
                 .mosqueKhotbas(new ArrayList<Khotba>())
                 .city(mosqueData.getCity())
@@ -66,11 +67,13 @@ public class MosqueService {
         return mosqueRepository.findAll(MosqueSpecifications.hasCity(country).or(MosqueSpecifications.hasCity(city))).stream().toList();
     }
 
+    @Transactional
     public boolean verifyMosque(Long mosqueId){
         Mosque existingMosque=mosqueRepository.findById(mosqueId).orElseThrow(()->new EntityNotFoundException("Mosque not found"));
         if (existingMosque.getVerified())
             return true;
         existingMosque.setVerified(true);
+        mosqueAdminService.receiveCredentials(existingMosque);
         mosqueRepository.save(existingMosque);
     return existingMosque.getVerified();
     }

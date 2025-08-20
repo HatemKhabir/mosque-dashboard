@@ -37,6 +37,9 @@ public class KhotbaService {
     public Page<Khotba> getKhotbasByFilter(Long mosqueId, KhotbaLanguage khotbaLanguage, KhotbaType khotbaType,Pageable page){
         return khotbaRepository.findAll(KhotbaSpecifications.specificMosque(mosqueId).or(KhotbaSpecifications.hasLanguage(khotbaLanguage)).or(KhotbaSpecifications.hasType(khotbaType)),page);
     }
+    public Page<Khotba> getAllKhotbas(Pageable page){
+        return khotbaRepository.findAll(page);
+    }
 
     public Khotba createKhotbaByText(Khotba khotba){
         return khotbaRepository.save(khotba);

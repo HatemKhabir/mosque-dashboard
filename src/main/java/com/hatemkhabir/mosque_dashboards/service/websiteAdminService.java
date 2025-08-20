@@ -8,5 +8,5 @@ reactivateMosque(mosqueId) - Re-enable suspended mosque
 manageSystemUsers(userData) - Add/edit platform admins
 *
 * */
-public class AdminService {
+public class websiteAdminService {
 }

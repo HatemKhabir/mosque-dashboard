@@ -18,7 +18,8 @@ public class MosqueRegistrationDto {
     private String country;
     private String city;
     private String address;
-    private MosqueAdmin mosqueAdmin;
+    private String adminEmail;
+    private String adminPhone;
     private Boolean verified;
     private String mosqueName;
 
