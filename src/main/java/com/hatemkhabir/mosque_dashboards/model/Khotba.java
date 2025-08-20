@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -34,9 +35,10 @@ public class Khotba {
 
     private String content;
 
-    @NonNull
-    private String pdfUrl;
-    private String audioUrl;
+    @OneToMany(mappedBy = "khotba",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<FileResource> khotbaFiles;
+
+    private Boolean approved;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

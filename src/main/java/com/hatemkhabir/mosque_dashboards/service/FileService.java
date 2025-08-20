@@ -12,13 +12,19 @@ extractMetadata(file) - Get duration, page count, etc.
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.hatemkhabir.mosque_dashboards.model.FileResource;
+import com.hatemkhabir.mosque_dashboards.model.Khotba;
+import com.hatemkhabir.mosque_dashboards.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,49 +33,62 @@ import java.util.Map;
 public class FileService {
 
     private final Cloudinary cloudinary;
+    private final FileRepository fileRepository;
 
-    public String storeFile(MultipartFile file, String folder) {
-        try {
-            Map options = ObjectUtils.asMap(
-                    "folder", folder,
-                    "resource_type", "auto"
-            );
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
-            return uploadResult.get("secure_url").toString();
-        } catch (IOException e) {
-            log.error("File failed to upload with error {}", e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public FileResource uploadFile(MultipartFile file, String fileType, Khotba khotba) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap("resource_type", "auto", "folder", "khotbas"));
+
+        FileResource fileResource = FileResource.builder()
+                .fileUrl(uploadResult.get("secure_url").toString())
+                .cloudinaryId(uploadResult.get("public_id").toString())
+                .fileType(fileType)
+                .fileSize(file.getSize())
+                .uploadedAt(LocalDateTime.now())
+                .khotba(khotba)
+                .build();
+
+        return fileRepository.save(fileResource);
     }
 
-    public String deleteFile(String fileId){
-        try {
-           Map uploadResult = cloudinary.uploader().destroy(fileId, ObjectUtils.emptyMap());
-            return uploadResult.get("result").toString();
-        }catch (Exception e){
-            log.error("File deleting error : {}",e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public void deleteFile(FileResource fileResource) throws IOException {
+        cloudinary.uploader().destroy(fileResource.getCloudinaryId(), ObjectUtils.emptyMap());
+        fileRepository.delete(fileResource);
     }
 
-    public boolean deleteFiles(String[] fileIds){
-        try {
-            for (String fileId : fileIds) {
-            cloudinary.uploader().destroy(fileId,ObjectUtils.emptyMap());
-            };
-            return true;
-        }catch (Exception e){
-            log.error("Files deleting error : {}",e.getMessage());
-            throw new RuntimeException(e);
+    public void deleteFiles(List<Long> fileIds) {
+        List<FileResource> files = fileRepository.findAllById(fileIds);
+        for (FileResource file : files) {
+            try {
+                cloudinary.uploader().destroy(file.getCloudinaryId(), ObjectUtils.emptyMap());
+            } catch (Exception e) {
+                log.error("Failed to delete file {}: {}", file.getFileId(), e.getMessage());
+            }
         }
+        fileRepository.deleteAll(files);
     }
+
 
     public String generateDownloadUrl(String publicId) {
         return cloudinary.url()
                 .generate(publicId);
     }
 
+    public List<FileResource> listFiles(Long khotbaId){
+        return fileRepository.findAllByKhotbaId(khotbaId);
+    }
 
-
+    @SneakyThrows
+    public void deleteFilesByKhotba(Khotba khotba) throws IOException{
+            List<FileResource> files = fileRepository.findAllByKhotbaId(khotba.getId());
+        for (FileResource file : files) {
+            try {
+                deleteFile(file);
+            } catch (Exception e) {
+                log.error("Failed to delete file {} for khotba {}: {}", file.getFileId(), khotba.getId(), e.getMessage());
+            }
+        }
+        fileRepository.deleteAll(files);
+        }
 
 }
