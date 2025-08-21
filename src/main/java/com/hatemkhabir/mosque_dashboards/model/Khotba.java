@@ -38,7 +38,7 @@ public class Khotba {
     @OneToMany(mappedBy = "khotba",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<FileResource> khotbaFiles;
 
-    private Boolean approved;
+    private boolean approved=true;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

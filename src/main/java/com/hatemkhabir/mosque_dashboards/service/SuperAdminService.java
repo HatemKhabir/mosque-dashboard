@@ -13,7 +13,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /*\
@@ -27,14 +26,14 @@ verifyAccount(verificationToken) - Confirm admin email
 @Service
 @AllArgsConstructor
 @Slf4j
-public class MosqueAdminService {
+public class SuperAdminService {
 
     private MailSender mailSender;
     private BCryptPasswordEncoder passwordEncoder;
     private SimpleMailMessage simpleMailMessage;
     private MosqueAdminRepository mosqueAdminRepository;
 
-    public void receiveCredentials(Mosque mosque){
+    public void sendCredentials(Mosque mosque){
         try {
             String username = generateUsername(mosque.getMosqueName(), mosque.getId());
             String firstPassword = username + mosque.getId();
@@ -52,8 +51,9 @@ public class MosqueAdminService {
         log.error("Error creating creds and saving it to database : {}",e.getMessage());
 
         }
-
     }
+
+
 
     @Async
     @Retryable(

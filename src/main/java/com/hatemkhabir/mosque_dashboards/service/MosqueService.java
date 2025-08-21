@@ -1,25 +1,17 @@
 package com.hatemkhabir.mosque_dashboards.service;
 
 
-import com.hatemkhabir.mosque_dashboards.common.KhotbaLanguage;
-import com.hatemkhabir.mosque_dashboards.common.KhotbaType;
 import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
 import com.hatemkhabir.mosque_dashboards.model.Khotba;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
-import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
 import com.hatemkhabir.mosque_dashboards.pagination.MosqueSpecifications;
-import com.hatemkhabir.mosque_dashboards.repository.KhotbaRepository;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +31,9 @@ verifyMosque(mosqueId) - Mark mosque as verified
 public class MosqueService {
 
     private final MosqueRepository mosqueRepository;
-    private final MosqueAdminService mosqueAdminService;
+    private final SuperAdminService superAdminService;
 
-    public Long registerMosque(MosqueRegistrationDto mosqueData, Long adminId){
+    public Long registerMosque(MosqueRegistrationDto mosqueData){
         Optional<Mosque> existingMosque=mosqueRepository.findById(mosqueData.getId());
         if (existingMosque.isPresent()){
             return existingMosque.get().getId();
@@ -64,18 +56,30 @@ public class MosqueService {
     }
 
     public List<Mosque> listMosques(String country, String city){
-        return mosqueRepository.findAll(MosqueSpecifications.hasCity(country).or(MosqueSpecifications.hasCity(city))).stream().toList();
+        return mosqueRepository.findAll(MosqueSpecifications.hasCountry(country).or(MosqueSpecifications.hasCity(city))).stream().toList();
     }
+
+    public void deleteMosque(Long mosqueId){
+        try {
+            Optional<Mosque> existingMosque=mosqueRepository.findById(mosqueId);
+            if (existingMosque.isEmpty()){
+                throw new EntityNotFoundException("Mosque Not Found");
+            }
+            mosqueRepository.deleteById(mosqueId);
+        }catch (Exception e){
+            log.error("Error deleting mosque {}",e.getMessage());
+        }
+        }
 
     @Transactional
     public boolean verifyMosque(Long mosqueId){
         Mosque existingMosque=mosqueRepository.findById(mosqueId).orElseThrow(()->new EntityNotFoundException("Mosque not found"));
-        if (existingMosque.getVerified())
+        if (existingMosque.isVerified())
             return true;
         existingMosque.setVerified(true);
-        mosqueAdminService.receiveCredentials(existingMosque);
+        superAdminService.sendCredentials(existingMosque);
         mosqueRepository.save(existingMosque);
-    return existingMosque.getVerified();
+    return existingMosque.isVerified();
     }
 
 

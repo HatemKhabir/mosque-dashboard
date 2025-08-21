@@ -34,7 +34,7 @@ public class Mosque {
     private String adminEmail;
     private String adminPhone;
 
-    private Boolean verified=false;
+    private boolean verified=false;
 
     @NotBlank(message = "Please Specify Mosque Name")
     @Column(nullable = false)
