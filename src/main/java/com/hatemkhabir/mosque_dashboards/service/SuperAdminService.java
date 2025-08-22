@@ -5,12 +5,11 @@ import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueAdminRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,14 +23,14 @@ verifyAccount(verificationToken) - Confirm admin email
 *
 * */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class SuperAdminService {
 
-    private MailSender mailSender;
-    private BCryptPasswordEncoder passwordEncoder;
-    private SimpleMailMessage simpleMailMessage;
-    private MosqueAdminRepository mosqueAdminRepository;
+    private final MailSender mailSender;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final SimpleMailMessage simpleMailMessage;
+    private final MosqueAdminRepository mosqueAdminRepository;
 
     public void sendCredentials(Mosque mosque){
         try {
@@ -56,10 +55,7 @@ public class SuperAdminService {
 
 
     @Async
-    @Retryable(
-            retryFor = {MailException.class},
-            backoff = @Backoff(delay = 5000)
-    )
+
     private void sendEmail(String adminEmail, String username, String firstPassword, String mosqueName) {
             log.info("Trying to send email to {}",adminEmail);
             SimpleMailMessage message = new SimpleMailMessage();
