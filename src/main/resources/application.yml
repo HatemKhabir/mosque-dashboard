@@ -5,8 +5,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: khabirhatem38@gmail.com
-    password: mjxs voes xzin zvea   # App Password (move to ENV in prod)
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}   # App Password (move to ENV in prod)
     properties:
       mail:
         smtp:
@@ -15,9 +15,9 @@ spring:
             enable: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/mosque-khotba
-    username: postgres
-    password: admin
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -51,10 +51,10 @@ mosque:
     notification-email: musliminnovationlab@gmail.com
 
 cloudinary:
-    cloud-name: de26qjxpf
-    api-key: 899423758789957
-    api-secret: 6bEbIWHUphDX7PySZQDn_IVY5Fc
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}
 
 superAdmin:
     username: superadmin
-    password: $2a$12$dsKHGuetM1nbzsIPJPKUbu8yHYnj/dZEJTzw9E4eSWM3Bvtvt5TlW
+    password: ${SUPERADMIN_PASSWORD_HASH}
