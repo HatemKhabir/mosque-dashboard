@@ -2,6 +2,7 @@ package com.hatemkhabir.mosque_dashboards.controller;
 
 
 import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
+import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.service.MosqueService;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,15 @@ public class MosqueRestController {
     private final MosqueService mosqueService;
 
     @GetMapping
-    public ResponseEntity<List<Mosque>> getAllMosques(@RequestParam(required = false) String city,@RequestParam(required = false) String country){
+    public ResponseEntity<List<MosqueResponseDto>> getAllMosques(@RequestParam(required = false) String city, @RequestParam(required = false) String country){
         return ResponseEntity.ok(mosqueService.listMosques(country,city));
     }
 
     @PostMapping
     public ResponseEntity<?> registerMosque(@RequestBody MosqueRegistrationDto mosqueRegistration){
+        log.info("Registration called");
         Long mosqueId=mosqueService.registerMosque(mosqueRegistration);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(mosqueId);
     }
 

@@ -1,6 +1,7 @@
 package com.hatemkhabir.mosque_dashboards.controller;
 
 
+import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.service.MosqueService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class SuperAdminRestController {
         }
 
         @GetMapping
-    public ResponseEntity<List<Mosque>> getAllMosques(){
+    public ResponseEntity<List<MosqueResponseDto>> getAllMosques(){
             return ResponseEntity.status(HttpStatus.FOUND).body(mosqueService.listMosques(null,null));
         }
 

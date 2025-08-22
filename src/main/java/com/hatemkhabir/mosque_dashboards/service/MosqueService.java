@@ -2,15 +2,20 @@ package com.hatemkhabir.mosque_dashboards.service;
 
 
 import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
+import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
+import com.hatemkhabir.mosque_dashboards.mapper.MosqueMapper;
 import com.hatemkhabir.mosque_dashboards.model.Khotba;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
+import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
 import com.hatemkhabir.mosque_dashboards.pagination.MosqueSpecifications;
+import com.hatemkhabir.mosque_dashboards.repository.MosqueAdminRepository;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueRepository;
+import com.hatemkhabir.mosque_dashboards.service.SuperAdminService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,23 +36,29 @@ verifyMosque(mosqueId) - Mark mosque as verified
 public class MosqueService {
 
     private final MosqueRepository mosqueRepository;
+    private final MosqueAdminRepository mosqueAdminRepository;
     private final SuperAdminService superAdminService;
 
+    @Transactional
     public Long registerMosque(MosqueRegistrationDto mosqueData){
-        Optional<Mosque> existingMosque=mosqueRepository.findById(mosqueData.getId());
-        if (existingMosque.isPresent()){
-            return existingMosque.get().getId();
-        }
+   //add duplicate mosque constraint
+        log.info("mosque data received , {}",mosqueData);
+        MosqueAdmin mosqueAdmin=MosqueAdmin.builder()
+                .email(mosqueData.getAdminEmail())
+                .phoneNumber(mosqueData.getAdminPhone())
+                .build();
+        mosqueAdminRepository.save(mosqueAdmin);
         Mosque newMosque=Mosque.builder()
-                .id(mosqueData.getId())
                 .adminEmail(mosqueData.getAdminEmail())
                 .adminPhone(mosqueData.getAdminPhone())
+                .mosqueAdmin(mosqueAdmin)
                 .mosqueName(mosqueData.getMosqueName())
-                .mosqueKhotbas(new ArrayList<Khotba>())
+                .mosqueKhotbas(new ArrayList<>())
                 .city(mosqueData.getCity())
                 .country(mosqueData.getCountry())
                 .address(mosqueData.getAddress())
                 .verified(false).build();
+        mosqueRepository.save(newMosque);
         return newMosque.getId();
     }
 
@@ -55,8 +66,12 @@ public class MosqueService {
         return mosqueRepository.findById(mosqueId).orElseThrow();
     }
 
-    public List<Mosque> listMosques(String country, String city){
-        return mosqueRepository.findAll(MosqueSpecifications.hasCountry(country).or(MosqueSpecifications.hasCity(city))).stream().toList();
+    public List<MosqueResponseDto> listMosques(String country, String city){
+        return mosqueRepository.findAll(
+                MosqueSpecifications.hasCountry(country).or(MosqueSpecifications.hasCity(city))
+                )
+                .stream()
+                .map(MosqueMapper::mapToDto).toList();
     }
 
     public void deleteMosque(Long mosqueId){
