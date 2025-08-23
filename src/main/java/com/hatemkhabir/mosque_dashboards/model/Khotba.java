@@ -33,6 +33,8 @@ public class Khotba {
     @Column(nullable = false)
     private KhotbaLanguage officialLanguage;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @OneToMany(mappedBy = "khotba",cascade = CascadeType.ALL,orphanRemoval = true)

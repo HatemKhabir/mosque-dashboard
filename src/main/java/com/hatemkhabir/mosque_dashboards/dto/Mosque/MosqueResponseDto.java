@@ -1,4 +1,4 @@
-package com.hatemkhabir.mosque_dashboards.dto;
+package com.hatemkhabir.mosque_dashboards.dto.Mosque;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

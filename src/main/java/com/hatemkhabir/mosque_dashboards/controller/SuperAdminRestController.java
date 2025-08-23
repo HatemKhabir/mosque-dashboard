@@ -1,8 +1,7 @@
 package com.hatemkhabir.mosque_dashboards.controller;
 
 
-import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
-import com.hatemkhabir.mosque_dashboards.model.Mosque;
+import com.hatemkhabir.mosque_dashboards.dto.Mosque.MosqueResponseDto;
 import com.hatemkhabir.mosque_dashboards.service.MosqueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ public class SuperAdminRestController {
         private final MosqueService mosqueService;
 
 
-        @PostMapping("/mosques/{id}/verify")
+        @PostMapping("/mosques/{mosqueId}/verify")
     public ResponseEntity<?> verifyMosque(@PathVariable Long mosqueId){
             return ResponseEntity.ok(mosqueService.verifyMosque(mosqueId));
         }

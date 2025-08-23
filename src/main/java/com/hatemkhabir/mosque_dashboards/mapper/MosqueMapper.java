@@ -1,7 +1,6 @@
 package com.hatemkhabir.mosque_dashboards.mapper;
 
-import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
-import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
+import com.hatemkhabir.mosque_dashboards.dto.Mosque.MosqueResponseDto;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
 
 public class MosqueMapper {

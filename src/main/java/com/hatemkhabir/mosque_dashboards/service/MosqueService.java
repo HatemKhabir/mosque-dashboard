@@ -1,16 +1,14 @@
 package com.hatemkhabir.mosque_dashboards.service;
 
 
-import com.hatemkhabir.mosque_dashboards.dto.MosqueRegistrationDto;
-import com.hatemkhabir.mosque_dashboards.dto.MosqueResponseDto;
+import com.hatemkhabir.mosque_dashboards.dto.Mosque.MosqueRegistrationDto;
+import com.hatemkhabir.mosque_dashboards.dto.Mosque.MosqueResponseDto;
 import com.hatemkhabir.mosque_dashboards.mapper.MosqueMapper;
-import com.hatemkhabir.mosque_dashboards.model.Khotba;
 import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
 import com.hatemkhabir.mosque_dashboards.pagination.MosqueSpecifications;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueAdminRepository;
 import com.hatemkhabir.mosque_dashboards.repository.MosqueRepository;
-import com.hatemkhabir.mosque_dashboards.service.SuperAdminService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

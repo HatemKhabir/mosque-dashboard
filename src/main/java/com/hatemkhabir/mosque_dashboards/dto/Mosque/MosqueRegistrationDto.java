@@ -1,8 +1,5 @@
-package com.hatemkhabir.mosque_dashboards.dto;
+package com.hatemkhabir.mosque_dashboards.dto.Mosque;
 
-import com.hatemkhabir.mosque_dashboards.common.KhotbaLanguage;
-import com.hatemkhabir.mosque_dashboards.model.Mosque;
-import com.hatemkhabir.mosque_dashboards.model.MosqueAdmin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

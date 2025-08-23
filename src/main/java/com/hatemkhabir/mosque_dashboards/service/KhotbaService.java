@@ -11,10 +11,14 @@ publishKhotba(khotbaId) - Make khutbah publicly available
 
 import com.hatemkhabir.mosque_dashboards.common.KhotbaLanguage;
 import com.hatemkhabir.mosque_dashboards.common.KhotbaType;
+import com.hatemkhabir.mosque_dashboards.dto.Khotba.KhotbaRegistrationDTO;
+import com.hatemkhabir.mosque_dashboards.mapper.KhotbaMapper;
 import com.hatemkhabir.mosque_dashboards.model.FileResource;
 import com.hatemkhabir.mosque_dashboards.model.Khotba;
+import com.hatemkhabir.mosque_dashboards.model.Mosque;
 import com.hatemkhabir.mosque_dashboards.pagination.KhotbaSpecifications;
 import com.hatemkhabir.mosque_dashboards.repository.KhotbaRepository;
+import com.hatemkhabir.mosque_dashboards.repository.MosqueRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,16 +36,26 @@ import java.util.List;
 public class KhotbaService {
 
     private final KhotbaRepository khotbaRepository;
+    private final MosqueRepository mosqueRepository;
     private final FileService fileService;
 
-    public Page<Khotba> getKhotbasByFilter(Long mosqueId, KhotbaLanguage khotbaLanguage, KhotbaType khotbaType,Pageable page){
-        return khotbaRepository.findAll(KhotbaSpecifications.specificMosque(mosqueId).or(KhotbaSpecifications.hasLanguage(khotbaLanguage)).or(KhotbaSpecifications.hasType(khotbaType)),page);
+    public Page<KhotbaRegistrationDTO> getKhotbasByFilter(Long mosqueId, KhotbaLanguage khotbaLanguage, KhotbaType khotbaType,Pageable page){
+        return khotbaRepository.findAll(KhotbaSpecifications.specificMosque(mosqueId).or(KhotbaSpecifications.hasLanguage(khotbaLanguage)).or(KhotbaSpecifications.hasType(khotbaType)),page).map(KhotbaMapper::KhotbaResponseMapper);
     }
-    public Page<Khotba> getAllKhotbas(Pageable page){
-        return khotbaRepository.findAll(page);
+    public Page<KhotbaRegistrationDTO> getAllKhotbas(Pageable page){
+        return khotbaRepository.findAll(page).map(KhotbaMapper::KhotbaResponseMapper);
     }
 
-    public Khotba createKhotbaByText(Khotba khotba){
+    public Khotba createKhotbaByText(KhotbaRegistrationDTO khotbaDto){
+        Mosque mosque= mosqueRepository.findById(khotbaDto.getMosqueId()).orElseThrow(()->new EntityNotFoundException("mosque not found"));
+        Khotba khotba=Khotba.builder()
+                .mosque(mosque)
+                .content(khotbaDto.getContent())
+                .khotbaType(KhotbaType.valueOf(khotbaDto.getKhotbaType().toUpperCase()))
+                .title(khotbaDto.getTitle())
+                .officialLanguage(KhotbaLanguage.valueOf(khotbaDto.getOfficialLanguage().toUpperCase()))
+                .approved(false)
+                .build();
         return khotbaRepository.save(khotba);
     }
 
