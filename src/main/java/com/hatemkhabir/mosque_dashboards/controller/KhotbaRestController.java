@@ -4,6 +4,8 @@ package com.hatemkhabir.mosque_dashboards.controller;
 import com.hatemkhabir.mosque_dashboards.common.KhotbaLanguage;
 import com.hatemkhabir.mosque_dashboards.common.KhotbaType;
 import com.hatemkhabir.mosque_dashboards.dto.Khotba.KhotbaRegistrationDTO;
+import com.hatemkhabir.mosque_dashboards.dto.Khotba.KhotbaTypeDTO;
+import com.hatemkhabir.mosque_dashboards.dto.LanguageDTO;
 import com.hatemkhabir.mosque_dashboards.model.Khotba;
 import com.hatemkhabir.mosque_dashboards.service.KhotbaService;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequestMapping("/api/khotbas")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8080")
 public class KhotbaRestController {
 
     private final KhotbaService khotbaService;
@@ -33,6 +37,23 @@ public class KhotbaRestController {
     public ResponseEntity<Page<KhotbaRegistrationDTO>> getKhotbasByFilter(@RequestParam(required = false) Long mosqueId, @RequestParam(required = false)KhotbaLanguage khotbaLanguage, @RequestParam(required = false)KhotbaType khotbaType,Pageable page){
         return ResponseEntity.ok(khotbaService.getKhotbasByFilter(mosqueId, khotbaLanguage, khotbaType, page));
     }
+
+
+
+        @GetMapping("/languages")
+        public ResponseEntity<List<LanguageDTO>> getLanguages() {
+            List<LanguageDTO> languages = Arrays.stream(KhotbaLanguage.values())
+                    .map(lang -> new LanguageDTO(lang.name(), lang.getEnglishName()))
+                    .toList();
+
+            return ResponseEntity.ok(languages);
+        }
+
+        @GetMapping("/type")
+        public ResponseEntity<List<KhotbaTypeDTO>> getKhotbaTypes(){
+        List<KhotbaTypeDTO> types=Arrays.stream(KhotbaType.values()).map(type -> new KhotbaTypeDTO(type.getDisplayName())).toList();
+        return ResponseEntity.ok(types);
+        }
 
     @PostMapping
     public ResponseEntity<KhotbaRegistrationDTO> createKhotbaFromText(@RequestBody KhotbaRegistrationDTO khotba){
